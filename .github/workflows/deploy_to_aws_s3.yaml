@@ -36,7 +36,7 @@ jobs:
 
       - name: Deploy to AWS S3
         run: |
-          aws s3 sync . arn:aws:s3:::mycatscachingbucket \
+          aws s3 sync . arn:aws:s3:::mycatscachingbucket --debug \
             --exclude ".git/*" \
             --exclude ".github/*" \
             --exclude "node_modules/*" \
