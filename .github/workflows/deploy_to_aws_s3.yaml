@@ -48,7 +48,7 @@ jobs:
             --exclude "serverless.env.yml" \
             --exclude "serverless-offline.yml" \
             --exclude "serverless-offline.env.yml" \
-            --exclude "serverless-loca
+            --exclude "serverless-loca"
       # - name: Invalidate CloudFront cache
       #   run: |
       #     aws cloudfront create-invalidation \
