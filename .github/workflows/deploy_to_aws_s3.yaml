@@ -33,9 +33,6 @@ jobs:
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
           aws-region: ${{ secrets.AWS_REGION }}
-      - name: List files and current working directory
-        run: |
-          echo $PWD && ll
       - name: Deploy to AWS S3
         run: |
           aws s3 sync . s3://mycatscachingbucket --debug \
