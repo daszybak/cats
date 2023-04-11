@@ -1,0 +1,97 @@
+name: Deploy to AWS S3
+
+on:
+  push:
+    branches:
+      - master
+
+permissions:
+  id-token: write # This is required for requesting the JWT
+  contents: read # This is required for actions/checkout
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0 # This is required for the changelog to work
+
+      # - name: Setup Node.js
+      #   uses: actions/setup-node@v1
+      #   with:
+      #     node-version: 12
+
+      # - name: Install dependencies
+      #   run: npm ci
+
+      # - name: Build
+      #   run: npm run build
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Deploy to AWS S3
+        run: |
+          aws s3 sync . arn:aws:s3:::mycatscachingbucket \
+            --exclude ".git/*" \
+            --exclude ".github/*" \
+            --exclude "node_modules/*" \
+            --exclude "package-lock.json" \
+            --exclude "package.json" \
+            --exclude "README.md" \
+            --exclude "LICENSE" \
+            --exclude "serverless.yml" \
+            --exclude "serverless.env.yml" \
+            --exclude "serverless-offline.yml" \
+            --exclude "serverless-offline.env.yml" \
+            --exclude "serverless-loca
+      # - name: Invalidate CloudFront cache
+      #   run: |
+      #     aws cloudfront create-invalidation \
+      #       --distribution-id E1ZQZQXZQXZQXZ \
+      #       --paths "/*"
+      # - name: Deploy to AWS S3
+      #   uses: jakejarvis/s3-sync-action@master
+      #   with:
+      #     args: --acl public-read
+      #   env:
+      #     AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
+      #     AWS_REGION: ${{ secrets.AWS_REGION }}
+      #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      # - name: Invalidate CloudFront cache
+      #   uses: aws-actions/amazon-cloudfront-invalidate-objects@master
+      #   with:
+      #     distribution-id: ${{ secrets.AWS_CLOUDFRONT_DISTRIBUTION_ID }}
+      #     objects: '/*'
+
+      # - name: Notify Slack
+      #   uses: rtCamp/action-slack-notify@master
+      #   env:
+      #     SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+      #     SLACK_TITLE: "Deployed to production"
+      #     SLACK_USERNAME: "GitHub Actions"
+      #     SLACK_ICON_EMOJI: ":rocket:"
+      #     SLACK_COLOR: "#2eb886"
+      #     SLACK_FOOTER: "GitHub Actions"
+      #     SLACK_FOOTER_ICON: "https://platform.slack-edge.com/img/default_application_icon.png"
+      #     SLACK_MESSAGE: "Deployed to production"
+      #     SLACK_FIELDS: "repo,commit,author,action,eventName,ref,workflow,job,took"
+
+      # - name: Notify Discord
+      #   uses: appleboy/discord-action@master
+      #   with:
+      #     webhook_id: ${{ secrets.DISCORD_WEBHOOK_ID }}
+      #     webhook_token: ${{ secrets.DISCORD_WEBHOOK_TOKEN }}
+      #     color: ${{ secrets.DISCORD_COLOR }}
+      #     username: ${{ secrets.DISCORD_USERNAME }}
+      #     avatar_url: ${{ secrets.DISCORD_AVATAR_URL }}
+      #     content: "Deployed to production"
+
+      # - name: Notify Telegram
+      #   uses: appleboy/telegram-action@master
