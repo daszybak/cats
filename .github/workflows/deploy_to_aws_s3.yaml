@@ -48,11 +48,11 @@ jobs:
             --exclude "serverless-offline.yml" \
             --exclude "serverless-local.yml" \
             --exclude "serverless-local.env.yml"
-      # - name: Invalidate CloudFront cache
-      #   run: |
-      #     aws cloudfront create-invalidation \
-      #       --distribution-id E1ZQZQXZQXZQXZ \
-      #       --paths "/*"
+      - name: Invalidate CloudFront cache
+        run: |
+          aws cloudfront create-invalidation \
+            --distribution-id E3JDYJ6IS8NSFB \
+            --paths "/*"
       # - name: Deploy to AWS S3
       #   uses: jakejarvis/s3-sync-action@master
       #   with:
